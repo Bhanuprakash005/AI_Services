@@ -1,8 +1,5 @@
-// API Configuration - must be full Render URL (never relative /api)
-var API_BASE_URL = 'https://ai-services-xkpq.onrender.com/api';
-if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    API_BASE_URL = 'http://localhost:3000/api';
-}
+// API URL from inline script in index.html (so cached script.js cannot use old relative /api)
+var API_BASE_URL = (typeof window !== 'undefined' && window.__CONTACT_API_URL) ? window.__CONTACT_API_URL : 'https://ai-services-xkpq.onrender.com/api';
 
 // DOM Elements
 const contactForm = document.getElementById('contactForm');

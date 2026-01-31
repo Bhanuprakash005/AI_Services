@@ -188,6 +188,10 @@
         </div>
     </footer>
 
-    <script src="script.js?v=2"></script>
+    <script>
+      window.__CONTACT_API_URL = 'https://ai-services-xkpq.onrender.com/api';
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') window.__CONTACT_API_URL = 'http://localhost:3000/api';
+    </script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>
