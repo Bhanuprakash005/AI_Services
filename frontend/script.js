@@ -1,9 +1,8 @@
-// API Configuration - always call Render backend directly (never relative /api)
-const API_BASE_URL = (() => {
-    const host = window.location.hostname;
-    if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:3000/api';
-    return 'https://ai-services-xkpq.onrender.com/api';
-})();
+// API Configuration - must be full Render URL (never relative /api)
+var API_BASE_URL = 'https://ai-services-xkpq.onrender.com/api';
+if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    API_BASE_URL = 'http://localhost:3000/api';
+}
 
 // DOM Elements
 const contactForm = document.getElementById('contactForm');
@@ -53,12 +52,21 @@ contactForm.addEventListener('submit', async (e) => {
         });
         clearTimeout(timeoutId);
 
-        let data;
-        try {
-            const text = await response.text();
-            data = text ? JSON.parse(text) : {};
-        } catch (_) {
-            showFormMessage('Server returned an invalid response. Please try again in a moment.', 'error');
+        const text = await response.text();
+        let data = {};
+        if (text && (text.trim().startsWith('{') || text.trim().startsWith('['))) {
+            try {
+                data = JSON.parse(text);
+            } catch (_) {}
+        }
+
+        if (response.status === 502 || response.status === 503) {
+            showFormMessage('Server is temporarily unavailable. Wait a minute and try again.', 'error');
+            setFormLoading(false);
+            return;
+        }
+        if (!response.ok && !data.error) {
+            showFormMessage('Server returned an error. Please try again in a moment.', 'error');
             setFormLoading(false);
             return;
         }
