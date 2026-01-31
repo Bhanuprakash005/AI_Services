@@ -287,6 +287,15 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
+// GET /api/contact - friendly response when visited in browser (form uses POST)
+app.get('/api/contact', (req, res) => {
+  res.status(200).json({
+    message: 'Contact API is running. Use POST with { name, email, message } to submit the form.',
+    method: 'POST',
+    endpoint: '/api/contact',
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is running' });
