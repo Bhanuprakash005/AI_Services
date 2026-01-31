@@ -1,7 +1,0 @@
-{
-  "name": "ai-services-frontend",
-  "private": true,
-  "scripts": {
-    "build": "node build-config.js"
-  }
-}
