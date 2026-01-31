@@ -1,9 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://ai-services-xkpq.onrender.com/api/$1"
-    }
-  ]
+  "buildCommand": "npm run build"
 }
 

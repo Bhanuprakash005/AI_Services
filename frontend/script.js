@@ -1,9 +1,11 @@
 // API Configuration
-// Local dev talks directly to backend; production uses Vercel rewrite to Render at /api.
+// Uses PUBLIC_API_URL from config.js (injected at build) or direct Render URL.
+// Local dev: override with localhost when running on localhost.
 const API_BASE_URL = (() => {
     const host = window.location.hostname;
     const isLocal = host === 'localhost' || host === '127.0.0.1';
-    return isLocal ? 'http://localhost:3000/api' : '/api';
+    if (isLocal) return 'http://localhost:3000/api';
+    return (typeof window !== 'undefined' && window.__API_BASE_URL) || 'https://ai-services-xkpq.onrender.com/api';
 })();
 
 // DOM Elements
