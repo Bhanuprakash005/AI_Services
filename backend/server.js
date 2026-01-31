@@ -7,8 +7,8 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Middleware - allow all origins (Vercel frontend, localhost, etc.)
+app.use(cors({ origin: true, credentials: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.set('trust proxy', true);

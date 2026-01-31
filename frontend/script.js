@@ -43,31 +43,40 @@ contactForm.addEventListener('submit', async (e) => {
     setFormLoading(true);
 
     try {
-        // Send form data to backend
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
         const response = await fetch(`${API_BASE_URL}/contact`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),
+            signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
-        const data = await response.json();
+        let data;
+        try {
+            const text = await response.text();
+            data = text ? JSON.parse(text) : {};
+        } catch (_) {
+            showFormMessage('Server returned an invalid response. Please try again in a moment.', 'error');
+            setFormLoading(false);
+            return;
+        }
 
         if (response.ok && data.success) {
-            // Success
-            showFormMessage(data.message || 'Thank you for your message! We will get back to you soon.', 'success');
+            showFormMessage(data.message || 'Thank you! Your message was sent.', 'success');
             contactForm.reset();
         } else {
-            // Error from server
             showFormMessage(data.error || 'Something went wrong. Please try again.', 'error');
         }
     } catch (error) {
-        // Network or other error
-        console.error('Error submitting form:', error);
-        showFormMessage('Failed to send message. Please check your connection and try again.', 'error');
+        if (error.name === 'AbortError') {
+            showFormMessage('Request timed out. The server may be waking up—wait 30 seconds and try again.', 'error');
+        } else {
+            showFormMessage('Cannot reach server. Wait 30 seconds and try again (server may be starting).', 'error');
+        }
+        console.error('Contact form error:', error);
     } finally {
-        // Re-enable submit button
         setFormLoading(false);
     }
 });
